@@ -5,31 +5,29 @@ import 'dart:async';
 class Permission_Manager {
   /* Get user permissions */
 
-  final Completer c = new Completer();
-
-  Future get_permissions() async
+  Future<bool> get_permissions() async
   {
 
     //Android handler
     if (IO.Platform.isAndroid)
     {
         //Check for read permissions
-        SimplePermissions.checkPermission(Permission.ReadExternalStorage).then((result)
+        await SimplePermissions.checkPermission(Permission.ReadExternalStorage).then((result) async
         {
           //If granted
           if (result)
           {
-            c.complete(true);
+            return true;
           }
           //Otherwise request them
           else
           {
-            SimplePermissions.requestPermission(Permission.ReadExternalStorage).then((result)
+            await SimplePermissions.requestPermission(Permission.ReadExternalStorage).then((result)
             {
               // Determine if they were granted
               if (result == PermissionStatus.authorized)
               {
-                c.complete(true);
+                return true;
               }
               else
               {
@@ -42,10 +40,10 @@ class Permission_Manager {
 
     else
     {
-      c.complete(true);
+      return true;
     }
     
-    return c.future;
+    return true;
   }
 
 }

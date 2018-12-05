@@ -8,8 +8,7 @@ void main() async
 {
   //Ensure valid permissions
   Perm_Manager.Permission_Manager pm = Perm_Manager.Permission_Manager();
-  bool res = await pm.get_permissions();
-  print(res);
+  await pm.get_permissions();
   return runApp(MyApp());
 } 
 
