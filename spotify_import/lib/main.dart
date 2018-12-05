@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'theme.dart' as AppThemes;
 import 'homepage.dart' as HomePage;
 import 'audio_fs.dart' as Audio_FS;
+import 'permission_manager.dart' as Perm_Manager;
 
-void main() => runApp(MyApp());
+void main() async
+{
+  //Ensure valid permissions
+  Perm_Manager.Permission_Manager pm = Perm_Manager.Permission_Manager();
+  bool res = await pm.get_permissions();
+  print(res);
+  return runApp(MyApp());
+} 
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -22,6 +30,7 @@ class MyApp extends StatelessWidget {
       ),
 
       home: HomePage.MyHomePage(title: 'Import Music to Spotify'),
+
 
     );
   }
