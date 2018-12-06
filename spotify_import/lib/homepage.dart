@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'audio_fs.dart' as Audio_FS;
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -13,24 +14,15 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final Audio_FS.Audio_Filesystem audio_fs = new Audio_FS.Audio_Filesystem();
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  
+    // Class to access and retrieve audio files
 
   @override
   Widget build(BuildContext context) {
@@ -50,38 +42,41 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+        child: FutureBuilder<List<Audio_FS.Audio_File>>(
+          future: widget.audio_fs.fetch_audio(), // a previously-obtained Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<List<Audio_FS.Audio_File>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Text('Awaiting result...');
+              case ConnectionState.done:
+                if (snapshot.hasError)
+                  return Text('Error: ${snapshot.error}');
+                return list_from_snapshot(context, snapshot);
+            }
+            return null; // unreachable
+          },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget list_from_snapshot(BuildContext context, AsyncSnapshot snapshot) {
+    List<Audio_FS.Audio_File> files = snapshot.data;
+    return new ListView.builder(
+        itemCount: files.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new Column(
+            children: <Widget>[
+              new ListTile(
+                title: new Text('${files[index].title}'),
+                subtitle: new Text('${files[index].artist}'),
+              ),
+              new Divider(height: 2.0,),
+            ],
+          );
+        },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io' as IO;
+import 'dart:async';
 
 class Audio_File {
   String title;
@@ -14,7 +15,7 @@ class Audio_File {
 }
 
 class Audio_Filesystem {
-  List<Audio_File> fetch_audio()
+  Future<List<Audio_File>> fetch_audio() async
   {
     /* Allow for cross-platform audio file retrieval */
     
@@ -29,20 +30,21 @@ class Audio_Filesystem {
     /* Fetch iPhone music library */
     // TODO - IMPLEMENT
 
-    return 2;
+    return null;
   }
 
-  List<Audio_File> android_fetch()
+  Future<List<Audio_File>> android_fetch() async
   {
     /* Fetch Android music library */
 
+    Completer c = new Completer<List<Audio_File>>();
     List<Audio_File> files = new List<Audio_File>();
   
     //Access downloads directory
     IO.Directory root = IO.Directory('/sdcard/download');
     
     //Read all data
-    root.list(recursive: true, followLinks: false).listen((IO.FileSystemEntity entity) {
+     root.list(recursive: true, followLinks: false).listen((IO.FileSystemEntity entity) {
       
       //Fetch music files
       if (entity is IO.File)
@@ -53,14 +55,13 @@ class Audio_Filesystem {
         //Parse music files and add to list
         if (strForm.substring(extStart, strForm.length - 1) == "mp3") //TODO - All music files
         {
-          Audio_File file =parse_android_file(entity);
+          Audio_File file = parse_android_file(entity);
           files.add(file);
         }
       }
-    });    
+    }).onDone(() => c.complete(files));    
 
-    
-    return 3;
+    return c.future;
   }
 
   List<String> parse_android_info(String fullName)
@@ -81,7 +82,10 @@ class Audio_Filesystem {
       }
 
       else
+      {
         title = fullName;
+        artist = "None";
+      }
 
       return [title, artist];
   }
@@ -105,7 +109,7 @@ class Audio_Filesystem {
       List<String> info = parse_android_info(fullName);
 
       //Create class representation
-      return new Audio_File(info[0], info[1], path);     
+      return new Audio_File(info[0].trim(), info[1].trim(), path);     
   }
 
 }
