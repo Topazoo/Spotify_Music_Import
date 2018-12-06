@@ -1,16 +1,14 @@
-# spotify_import
+# Spotify Import App
+### Author: Peter Swanson
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Flutter](https://img.shields.io/badge/Flutter-1.0-green.svg)](https://flutter.io/) [![Simple Permissions](https://img.shields.io/badge/Simple%20Permissions-0.1.9-green.svg)](https://pub.dartlang.org/packages/simple_permissions)
 
-A new Flutter project.
+## Background:
+It's hard to manage jumping between music stored on my phone and on my Spotify. I've set out to build a cross platform mobile application to automatically add my stored music to a Spotify playlist.
 
-## Getting Started
+<b>This application is a work in progress.</b>
 
-This project is a starting point for a Flutter application.
+Note: This application is Android compatible with an iOS build coming soon.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+## Requirements:
+- Simple Permissions
+  - https://pub.dartlang.org/packages/simple_permissions
