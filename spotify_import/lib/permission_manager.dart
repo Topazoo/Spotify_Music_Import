@@ -16,9 +16,8 @@ class Permission_Manager {
         {
           //If granted
           if (result)
-          {
             return true;
-          }
+
           //Otherwise request them
           else
           {
@@ -26,23 +25,17 @@ class Permission_Manager {
             {
               // Determine if they were granted
               if (result == PermissionStatus.authorized)
-              {
                 return true;
-              }
+
               else
-              {
                 IO.exit(0); //TODO - display a message
-              }
+              
             });
           }
         });
     }
-
-    else
-    {
-      return true;
-    }
     
+    //iPhone permissions are automatic
     return true;
   }
 
