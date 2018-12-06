@@ -7,32 +7,30 @@ class Permission_Manager {
 
   Future<bool> get_permissions() async
   {
-
     //Android handler
     if (IO.Platform.isAndroid)
     {
-        //Check for read permissions
-        await SimplePermissions.checkPermission(Permission.ReadExternalStorage).then((result) async
+      //Check for read permissions
+      await SimplePermissions.checkPermission(Permission.ReadExternalStorage).then((result) async
+      {
+        //If granted
+        if (result)
+          return true;
+
+        //Otherwise request them
+        else
         {
-          //If granted
-          if (result)
-            return true;
-
-          //Otherwise request them
-          else
+          await SimplePermissions.requestPermission(Permission.ReadExternalStorage).then((result)
           {
-            await SimplePermissions.requestPermission(Permission.ReadExternalStorage).then((result)
-            {
-              // Determine if they were granted
-              if (result == PermissionStatus.authorized)
-                return true;
+            // Determine if they were granted
+            if (result == PermissionStatus.authorized)
+              return true;
 
-              else
-                IO.exit(0); //TODO - display a message
-              
-            });
-          }
-        });
+            else
+              IO.exit(0); //TODO - display a message
+          });
+        }
+      });
     }
     
     //iPhone permissions are automatic

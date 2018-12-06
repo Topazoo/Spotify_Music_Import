@@ -1,7 +1,8 @@
 import 'dart:io' as IO;
-import 'dart:async';
 
 class Audio_File {
+  /* Contains information about audio file */
+
   String title;
   String artist;
   String path;
@@ -15,14 +16,26 @@ class Audio_File {
 }
 
 class Audio_Filesystem {
-  Future<List<Audio_File>> fetch_audio() async
+
+  //List of currently selected files
+  List<Audio_File> selected = new List<Audio_File>();
+  //List of all files
+  List<Audio_File> files = new List<Audio_File>();
+
+  Audio_Filesystem()
+  {
+    //Get all audio files on instantiation
+    fetch_audio();
+  }
+
+  List<Audio_File> fetch_audio()
   {
     /* Allow for cross-platform audio file retrieval */
     
     if (IO.Platform.isAndroid)
-      return android_fetch();
+      android_fetch();
     else
-      return iPhone_fetch();
+      iPhone_fetch();
   }
 
   List<Audio_File> iPhone_fetch()
@@ -33,40 +46,10 @@ class Audio_Filesystem {
     return null;
   }
 
-  Future<List<Audio_File>> android_fetch() async
-  {
-    /* Fetch Android music library */
-
-    Completer c = new Completer<List<Audio_File>>();
-    List<Audio_File> files = new List<Audio_File>();
-  
-    //Access downloads directory
-    IO.Directory root = IO.Directory('/sdcard/download');
-    
-    //Read all data
-     root.list(recursive: true, followLinks: false).listen((IO.FileSystemEntity entity) {
-      
-      //Fetch music files
-      if (entity is IO.File)
-      {
-        String strForm = entity.toString();
-        int extStart = strForm.lastIndexOf('.') + 1;
-        
-        //Parse music files and add to list
-        if (strForm.substring(extStart, strForm.length - 1) == "mp3") //TODO - All music files
-        {
-          Audio_File file = parse_android_file(entity);
-          files.add(file);
-        }
-      }
-    }).onDone(() => c.complete(files));    
-
-    return c.future;
-  }
-
   List<String> parse_android_info(String fullName)
   {
-      /* Parse title and artist */
+      /* Parse title and artist
+        @fullname - The name of the file */
       
       String title;
       String artist;
@@ -81,6 +64,7 @@ class Audio_Filesystem {
         title = fullName.substring(nameSplit + 1);
       }
 
+      //Otherwise no artist
       else
       {
         title = fullName;
@@ -90,10 +74,44 @@ class Audio_Filesystem {
       return [title, artist];
   }
 
+  void android_fetch() 
+  {
+    /* Fetch Android music library */
+
+    List<Audio_File> files = new List<Audio_File>();
+  
+    //Access downloads directory
+    IO.Directory root = IO.Directory('/sdcard/download');
+    
+    //Read all data
+    List<IO.FileSystemEntity> all = root.listSync(recursive: true, followLinks: false);
+    for (IO.FileSystemEntity entity in all)
+    {
+      //Fetch files
+      if (entity is IO.File)
+      {
+        //Determine extension
+        String strForm = entity.toString();
+        int extStart = strForm.lastIndexOf('.') + 1;
+        
+        //Parse music files and add to list - All files initially selected
+        if (strForm.substring(extStart, strForm.length - 1) == "mp3") //TODO - All music files
+        {
+          Audio_File file = parse_android_file(entity);
+          files.add(file);
+          selected.add(file);
+        }
+      }  
+    }
+
+    //Store in class
+    this.files = files;
+  }
 
   Audio_File parse_android_file(IO.FileSystemEntity file)
   {
-      /* Get relevant information from collected files */
+      /* Get relevant information from collected files and convert it to class
+        @file - The file to get info from */
 
       //Get path
       String path = file.absolute.toString();

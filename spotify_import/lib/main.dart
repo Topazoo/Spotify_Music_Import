@@ -5,17 +5,22 @@ import 'permission_manager.dart' as Perm_Manager;
 
 void main() async
 {
-  //Ensure valid permissions
+  /* The main driver for the application */
+
+  //Check and request permissions before loading app
   Perm_Manager.Permission_Manager pm = Perm_Manager.Permission_Manager();
   await pm.get_permissions();
-  return runApp(MyApp());
+
+  return runApp(Spotify_Import());
 } 
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class Spotify_Import extends StatelessWidget {
+  /* Root widget of the application */
 
   @override
   Widget build(BuildContext context) {
+    /* Build the widget title and color scheme */
+
     return MaterialApp(
       title: 'Spotify Import',
 
@@ -23,6 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: AppThemes.MainThemeSwatch.swatch,
       ),
 
+      //Create and set homepage widget
       home: HomePage.MyHomePage(title: 'Import Music to Spotify'),
 
     );
