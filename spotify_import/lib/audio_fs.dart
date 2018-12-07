@@ -19,13 +19,17 @@ class Audio_Filesystem {
 
   //List of currently selected files
   List<Audio_File> selected = new List<Audio_File>();
-  //List of all files
+  //List of known files
   List<Audio_File> files = new List<Audio_File>();
+  //List of unknown files
+  List<Audio_File> unknownFiles = new List<Audio_File>();
 
   Audio_Filesystem()
   {
     //Get all audio files on instantiation
     fetch_audio();
+    files.sort((a, b) => a.artist.compareTo(b.artist));
+    unknownFiles.sort((a, b) => a.artist.compareTo(b.artist));
   }
 
   List<Audio_File> fetch_audio()
@@ -98,8 +102,14 @@ class Audio_Filesystem {
         if (strForm.substring(extStart, strForm.length - 1) == "mp3") //TODO - All music files
         {
           Audio_File file = parse_android_file(entity);
-          files.add(file);
-          selected.add(file);
+
+          if (file.artist != "None")
+          {
+            files.add(file);
+            selected.add(file);
+          }
+          else
+            unknownFiles.add(file);
         }
       }  
     }

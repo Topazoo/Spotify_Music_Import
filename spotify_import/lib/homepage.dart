@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'music_list_widget.dart';
+import 'theme.dart' as AppThemes;
 import 'audio_fs.dart' as Audio_FS;
 
 class MyHomePage extends StatefulWidget {
@@ -8,21 +10,25 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  //Audio Filesystem containing audio files
-  final Audio_FS.Audio_Filesystem aud = new Audio_FS.Audio_Filesystem();
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
   
+  //Audio Filesystem containing audio files
+  static final Audio_FS.Audio_Filesystem am = new Audio_FS.Audio_Filesystem();
+  
+  final List<Widget> _pages = [
+    Music_List_Widget_Known(aud: am),
+    Music_List_Widget_Unknown(aud: am),
+    Text('test')
+  ];
+
   @override
   Widget build(BuildContext context) {
     /* Build the contents of the homepage widget */
-    
-    //Get files stored in audio filesystem
-    List<Audio_FS.Audio_File> files = widget.aud.files;
 
     return Scaffold(
       //Create appbar with title
@@ -34,59 +40,36 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       //Create centered body with widget displaying stored audio files
-      body: Center(
-        child: music_list(context, files),
-      ),
+      body: _pages[_selectedIndex],
+
+      bottomNavigationBar: build_import_btn(context),
 
     );
   }
 
-  Widget music_list(BuildContext context, List<Audio_FS.Audio_File> files) {
-    /* Widget to display a list of audio files
-      @context - The context of the parent widget
-      @files - The files retrieved from the audio filesystem */
+  Widget build_import_btn(BuildContext context)
+  {
+    return new BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.library_music), title: Text('Songs')),
 
-    return new ListView.builder(
-      //Set the count
-      itemCount: files.length,
-      //Set function used to build the list
-      itemBuilder: (BuildContext context, int index) 
-      {
-        return new Column(
-          //Create list item widgets with a checkbox
-          children: <Widget>[
-            new CheckboxListTile(
-              //Add audio file title and artist to list item
-              title: new Text('${files[index].title}'),
+          BottomNavigationBarItem(icon: Icon(Icons.help_outline), title: Text('Unknown Songs')),
 
-              subtitle: new Text('${files[index].artist}'),
+          BottomNavigationBarItem(icon: Icon(Icons.cloud_upload), title: Text('Import')),
+        ],
 
-              //Determine if the item is currently selected (in the audio filesystem selected list)
-              value: widget.aud.selected.contains(files[index]),
+        currentIndex: _selectedIndex,
 
-              //Set the function for when an item is selected
-              onChanged: (bool value) 
-              {
-                setState(() 
-                { 
-                  //Remove from selected list if item is currently selected
-                  if(widget.aud.selected.contains(files[index]))
-                    widget.aud.selected.remove(files[index]);
+        fixedColor: AppThemes.MainThemeSwatch.swatch,
 
-                  else
-                    //Otherwise add it to the selected list
-                    widget.aud.selected.add(files[index]);
-                });
-              },
-            ),
-
-            new Divider(height: 2.0,),
-
-          ],
-        );
-      },
-    );
+        onTap: import,
+      );
   }
-} 
 
-
+  void import(int index) 
+  {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}
