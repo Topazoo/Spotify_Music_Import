@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'music_list_widget.dart';
+import 'spotify_widget.dart';
 import 'theme.dart' as AppThemes;
 import 'audio_fs.dart' as Audio_FS;
 
@@ -23,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _pages = [
     Music_List_Widget_Known(aud: am),
     Music_List_Widget_Unknown(aud: am),
-    Text('test')
+    Spotify_Widget()
   ];
 
   @override
