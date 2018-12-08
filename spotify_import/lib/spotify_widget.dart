@@ -10,19 +10,29 @@ class Spotify_Widget extends StatefulWidget {
   final Spotify_Manager sm = new Spotify_Manager();  
 
   @override
-  _Spotify_Widget createState() => _Spotify_Widget();
+  _Spotify_Widget createState()
+  {
+   _Spotify_Widget wid = _Spotify_Widget();
+   sm.wid = wid;
+    
+    return wid;
+  }
 }
 
 class _Spotify_Widget extends State<Spotify_Widget> {
-  
-  int _isAuthenticated = 0;
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
-      child: new WebviewScaffold(
-          url: widget.sm.authUrl,
-      )
-    );
+    if (widget.sm.retCode == -1)
+      return new Center(
+        child: new WebviewScaffold(
+            url: widget.sm.authUrl,
+        )
+      );
+    else if (widget.sm.retCode == 0)
+      return new Center(child: new Text("Error connecting to Spotify services"));
+    else
+      return new Center(child: new Text("Connected to Spotify services!"));
   }
+  
 }

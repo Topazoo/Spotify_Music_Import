@@ -1,11 +1,18 @@
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/material.dart';
+import 'spotify_widget.dart';
 import 'dart:io';
 
 class Spotify_Manager {
   String authUrl;
+  String accessCode;
+  int retCode;
+  State<Spotify_Widget> wid;
 
   Spotify_Manager()
   {
+    retCode = -1;
+
     //Authenticate user
     get_auth();
   }
@@ -38,15 +45,24 @@ class Spotify_Manager {
   Future run_server() async
   {
     /* Run callback server for Spotify authentication */
-    
+
     var server = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
       8000,
     );
 
     await for (HttpRequest request in server) {
-      request.response..write('Hello, world!')..close();
-      print("GOT REQUEST");
+      request.response..write('Validated!')..close();
+      
+      if (request.uri.queryParameters.containsKey('code'))
+      {
+        accessCode = request.uri.queryParameters['code'];
+        retCode = 1;
+      }
+      else if (request.uri.queryParameters.containsKey('error'))
+        retCode = 0;     
+
+      wid.setState(() {}); 
     }
   }
 
