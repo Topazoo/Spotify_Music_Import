@@ -21,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //Audio Filesystem containing audio files
   static final Audio_FS.Audio_Filesystem am = new Audio_FS.Audio_Filesystem();
   
+  //Possible pages based on bottom navbar selection
   final List<Widget> _pages = [
     Music_List_Widget_Known(aud: am),
     Music_List_Widget_Unknown(aud: am),
