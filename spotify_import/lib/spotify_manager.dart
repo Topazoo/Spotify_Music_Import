@@ -36,7 +36,8 @@ class Spotify_Manager {
   {
     /* Load Spotify developer client ID */
 
-    String env = await rootBundle.loadString('assets/.env');
+    //Load client ID
+    String env = await rootBundle.loadString('assets/.client');
     int start = env.indexOf('\'') + 1;
 
     return env.substring(start, env.length - 1);
@@ -46,22 +47,29 @@ class Spotify_Manager {
   {
     /* Run callback server for Spotify authentication */
 
+    //Create server on locslhost
     var server = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
       8000,
     );
 
+    //Wait for Spotify callback
     await for (HttpRequest request in server) {
       request.response..write('Validated!')..close();
       
+      //If authenticated, store code
       if (request.uri.queryParameters.containsKey('code'))
       {
         accessCode = request.uri.queryParameters['code'];
         retCode = 1;
+        server.close();
       }
+
+      //Else, error
       else if (request.uri.queryParameters.containsKey('error'))
         retCode = 0;     
 
+      //Update widget state
       wid.setState(() {}); 
     }
   }

@@ -29,7 +29,7 @@ class Spotify_Import extends StatelessWidget {
       ),
 
       //Create and set homepage widget
-      home: HomePage.MyHomePage(title: 'Import Music to Spotify'),
+      home: HomePage.MyHomePage(title: 'Import Music to Spotify',),
 
     );
   }
