@@ -25,8 +25,11 @@ class _Spotify_Widget extends State<Spotify_Widget> {
 
   @override
   Widget build(BuildContext context) {
+    int status = widget.sm.retCode;
+    Token token = widget.sm.token;
+
     //If not connected to Spotify
-    if (widget.sm.retCode != 1)
+    if (status != 1)
     {
       //Embed webview in custom view
       Rect newRect = new Rect.fromLTWH(0.0, 80.0, 
@@ -45,7 +48,8 @@ class _Spotify_Widget extends State<Spotify_Widget> {
       //Close webview
       widget.webview.close();
       //TODO - Replace with import button
-      return new Center(child: new Text("Connected to Spotify services!\nCode: " + widget.sm.accessCode));
+      return new Center(child: new Text("Connected to Spotify services!\n\nCode: " + 
+                        token.accessToken + "\n\nExpires in: " + token.expTime.toString() +"s", textAlign:TextAlign.center,));
     }
   }
   
