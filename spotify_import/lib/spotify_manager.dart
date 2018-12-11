@@ -159,6 +159,18 @@ class Spotify_Manager {
     return queryStart;
   }
 
+  void add_by_ids(String track_uri) async
+  {
+    /* Add track to saved music */
+    
+    int id_start = track_uri.lastIndexOf('/') + 1;
+    String id = track_uri.substring(id_start);
+
+    await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + id, 
+                    headers: {"Authorization": "Bearer " + token.accessToken});
+
+  }
+
   void import_songs() async
   {
     /* Import songs to Spotify */
@@ -179,7 +191,7 @@ class Spotify_Manager {
       if (vals.length > 0)
       {
         String id = vals[0]["href"].toString();
-        print("FOUND TRACK ID: " + id); //TODO - Add to Songs list via API
+        add_by_ids(id); //TODO - Build list of ids first
         found.add(song);
       }
     }

@@ -7,8 +7,6 @@ class Audio_File {
   String artist;
   String path;
 
-  String apiID;
-
   Audio_File(String title, String artist, String path)
   {
     this.title = title;
