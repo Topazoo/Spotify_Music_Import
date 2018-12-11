@@ -4,6 +4,7 @@ import 'spotify_widget.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as HTTP;
+import 'audio_fs.dart' as Audio_FS;
 
 class Token
 {
@@ -30,6 +31,9 @@ class Spotify_Manager {
   String secret;
   
   State<Spotify_Widget> wid;
+  Audio_FS.Audio_Filesystem files;
+  List<Audio_FS.Audio_File> found = new List<Audio_FS.Audio_File>();
+
   Token token;
 
   Spotify_Manager()
@@ -132,19 +136,57 @@ class Spotify_Manager {
       token = new Token(accessToken: body["access_token"], refreshToken: body["refresh_token"], 
                         expTime: body["expires_in"]);
 
+      //Update state to display imprt button
       retCode = 1;
+    }
 
-      print("ACCESS: " + token.accessToken);
-      print("REFRESH: " + token.refreshToken);
-      print("EXPIRES: " + token.expTime.toString());
-    }
-    
     else
-    {
       retCode = 0;
-    }
 
     //Update widget
     wid.setState(() {}); 
+  }
+
+  String build_search_query(String title, String artist)
+  {
+    /* Build a Spotify API search query */
+
+    title = title.replaceAll(" ", "+");
+    artist = artist.replaceAll(" ", "+");
+    String queryStart = "https://api.spotify.com/v1/search?";
+    queryStart += "q=" + "artist:" + artist + "%20track:" + title + "&type=track" + "&limit=1";
+
+    return queryStart;
+  }
+
+  void import_songs() async
+  {
+    /* Import songs to Spotify */
+
+    //For all selected songs
+    for(Audio_FS.Audio_File song in files.selected)
+    {
+      //Query Spotify API for track ID
+      String query = build_search_query(song.title, song.artist);
+      HTTP.Response response = await HTTP.get(query, 
+                                headers: {"Authorization": "Bearer " + token.accessToken});
+
+      Map data = jsonDecode(response.body);
+      List<dynamic> vals = data["tracks"]["items"];
+      
+      //If track found
+      //TODO - Perform title and artist verification
+      if (vals.length > 0)
+      {
+        String id = vals[0]["href"].toString();
+        print("FOUND TRACK ID: " + id); //TODO - Add to Songs list via API
+        found.add(song);
+      }
+    }
+
+    //Update state to display imported tracks
+    //TODO - Only display failed imports
+    retCode = 2;
+    wid.setState(() {});
   }
 }

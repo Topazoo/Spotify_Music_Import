@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _pages = [
     Music_List_Widget_Known(aud: am),
     Music_List_Widget_Unknown(aud: am),
-    Spotify_Widget()
+    Spotify_Widget(aud: am)
   ];
 
   @override

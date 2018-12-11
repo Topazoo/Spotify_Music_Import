@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'spotify_manager.dart';
+import 'theme.dart' as AppTheme;
+import 'audio_fs.dart' as Audio_FS;
 
 class Spotify_Widget extends StatefulWidget {
   /* Homepage widget that attaches to root */
 
-  Spotify_Widget({Key key}) : super(key: key);
+  Spotify_Widget({Key key, this.aud}) : super(key: key);
 
   final Spotify_Manager sm = new Spotify_Manager();  
   final FlutterWebviewPlugin webview = new FlutterWebviewPlugin();
+  final Audio_FS.Audio_Filesystem aud;
 
   @override
   _Spotify_Widget createState()
@@ -16,6 +19,7 @@ class Spotify_Widget extends StatefulWidget {
     //Embed widget in Spotify Manager to allow it to update state
     _Spotify_Widget wid = _Spotify_Widget();
     sm.wid = wid;
+    sm.files = aud;
     
     return wid;
   }
@@ -25,11 +29,11 @@ class _Spotify_Widget extends State<Spotify_Widget> {
 
   @override
   Widget build(BuildContext context) {
+    //Change display based on status
     int status = widget.sm.retCode;
-    Token token = widget.sm.token;
 
     //If not connected to Spotify
-    if (status != 1)
+    if (status < 1)
     {
       //Embed webview in custom view
       Rect newRect = new Rect.fromLTWH(0.0, 80.0, 
@@ -43,14 +47,55 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     }
 
     //If connected to Spotify
-    else
+    else if (status == 1)
     {
       //Close webview
       widget.webview.close();
-      //TODO - Replace with import button
-      return new Center(child: new Text("Connected to Spotify services!\n\nCode: " + 
-                        token.accessToken + "\n\nExpires in: " + token.expTime.toString() +"s", textAlign:TextAlign.center,));
+
+      //Show import button
+      return new Center(child: new RaisedButton(
+                          color: AppTheme.MainThemeSwatch.swatch,
+                          textColor: Colors.white,
+                          child: new Text("Import Songs", textScaleFactor: 2.0,),
+                          onPressed: widget.sm.import_songs,
+                          padding: new EdgeInsets.fromLTRB(60.0, 25.0, 60.0, 25.0),)
+                        );
+    }
+
+    //Else if songs imported
+    else if (status == 2)
+    {
+      return new Center(
+        child: Column(
+          children: [
+            new Expanded(child: new ListView.builder(
+              //Set the count
+              itemCount: widget.sm.found.length,
+
+              shrinkWrap: true,
+
+              //Set function used to build the list
+              itemBuilder: (BuildContext context, int index) 
+              {
+                return new Column(
+                  //Create list item widgets 
+                  children: <Widget>[
+                    new ListTile(
+                      //Add audio file title and artist to list item
+                      title: new Text('${widget.sm.found[index].title}'),
+
+                      subtitle: new Text('${widget.sm.found[index].artist}'),
+                    ),
+
+                    new Divider(height: 2.0,),
+
+                  ],
+                );
+              },
+            )),
+          ]
+        )
+      );
     }
   }
-  
 }

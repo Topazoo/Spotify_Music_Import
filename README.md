@@ -13,6 +13,22 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 
 This application is Android compatible with an iOS build coming soon.
 
+## TODO List:
+### API Access
+- Use the collected Track ID's to add songs to users's Spotify * 
+- Perform a more robust title and artist verification on collected songs
+- Add an asynchronous timer to refresh API access after initial token exchange
+
+### Error Handling
+- Display messages if song lists are empty rather than blank lists
+- Display error page if user denies read privileges rather than exiting
+- Display songs that could not be imported rather than songs that were imported
+- Test network access before handling Spotfiy authentication
+
+### Compatibility 
+- Collect saved music from iPhones
+- Collect all common audio formats rather than just .mp3
+
 ## Requirements:
 ### Flutter Plugins:
 - Simple Permissions

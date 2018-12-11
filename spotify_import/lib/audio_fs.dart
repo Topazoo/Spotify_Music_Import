@@ -7,6 +7,8 @@ class Audio_File {
   String artist;
   String path;
 
+  String apiID;
+
   Audio_File(String title, String artist, String path)
   {
     this.title = title;
@@ -139,5 +141,4 @@ class Audio_Filesystem {
       //Create class representation
       return new Audio_File(info[0].trim(), info[1].trim(), path);     
   }
-
 }
