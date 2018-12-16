@@ -12,8 +12,29 @@ class Music_List_Widget_Known extends StatefulWidget {
   _Music_List_Widget_Known createState() => _Music_List_Widget_Known();
 }
 
-class _Music_List_Widget_Known extends State<Music_List_Widget_Known> {
+class _Music_List_Widget_Known extends State<Music_List_Widget_Known> with WidgetsBindingObserver{
   
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      if(state == AppLifecycleState.resumed)
+        widget.aud.collect_files();
+      });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return new Center(
@@ -79,8 +100,28 @@ class Music_List_Widget_Unknown extends StatefulWidget {
   _Music_List_Widget_Unknown createState() => _Music_List_Widget_Unknown();
 }
 
-class _Music_List_Widget_Unknown extends State<Music_List_Widget_Unknown> {
+class _Music_List_Widget_Unknown extends State<Music_List_Widget_Unknown> with WidgetsBindingObserver {
   
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      if(state == AppLifecycleState.resumed)
+        widget.aud.collect_files();
+      });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Center(

@@ -4,6 +4,7 @@ import 'connection_uitility.dart';
 import 'spotify_manager.dart';
 import 'theme.dart' as AppTheme;
 import 'audio_fs.dart' as Audio_FS;
+import 'package:flutter/services.dart';
 
 class Spotify_Widget extends StatefulWidget {
   /* Homepage widget that attaches to root */

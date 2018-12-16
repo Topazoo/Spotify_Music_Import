@@ -17,6 +17,8 @@ class Audio_File {
 
 class Audio_Filesystem {
 
+  Map<String, Audio_File> cached = new Map<String, Audio_File>();
+
   //List of currently selected files
   List<Audio_File> selected = new List<Audio_File>();
   //List of known files
@@ -26,10 +28,17 @@ class Audio_Filesystem {
 
   Audio_Filesystem()
   {
-    //Get all audio files on instantiation
+    collect_files();
+  }
+
+  void collect_files()
+  {
+    /* Get all audio files  */
+
     fetch_audio();
+    
     files.sort((a, b) => a.artist.compareTo(b.artist));
-    unknownFiles.sort((a, b) => a.artist.compareTo(b.artist));
+    unknownFiles.sort((a, b) => a.title.compareTo(b.title));
   }
 
   List<Audio_File> fetch_audio()
@@ -81,8 +90,6 @@ class Audio_Filesystem {
   void android_fetch() 
   {
     /* Fetch Android music library */
-
-    List<Audio_File> files = new List<Audio_File>();
   
     //Access downloads directory
     IO.Directory root = IO.Directory('/sdcard/download');
@@ -103,13 +110,18 @@ class Audio_Filesystem {
         {
           Audio_File file = parse_android_file(entity);
 
-          if (file.artist != "None")
+          if(!cached.containsKey(file.title+file.artist))
           {
-            files.add(file);
-            selected.add(file);
+            if (file.artist != "None")
+            {
+              files.add(file);
+              selected.add(file);
+            }
+            else
+              unknownFiles.add(file);
+
+            cached[file.title+file.artist] = file;
           }
-          else
-            unknownFiles.add(file);
         }
       }  
     }

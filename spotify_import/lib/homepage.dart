@@ -85,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   {
     setState(() {
       _selectedIndex = index;
+      am.collect_files();
     });
   }
 }

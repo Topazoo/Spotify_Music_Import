@@ -25,7 +25,6 @@ This application is Android compatible with an iOS build coming soon.
 ### Compatibility 
 - Collect saved music from iPhones
 - Collect all common audio formats rather than just .mp3
-- Reload songs on page change
 
 ## Requirements:
 ### Flutter Plugins:
