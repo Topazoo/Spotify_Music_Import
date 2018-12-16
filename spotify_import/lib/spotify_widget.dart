@@ -95,6 +95,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     //Else if songs imported
     else if (status == 2)
     {
+
       String resText = "";
       Widget failed, number;
       List<Audio_FS.Audio_File> songs;
@@ -120,7 +121,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
 
       else
       {
-        int totalSongs = widget.aud.files.length + widget.aud.unknownFiles.length;
+        int totalSongs = widget.aud.selected.length;
         int totalSuccess = totalSongs - widget.sm.notFound.length;
 
         songs = widget.sm.notFound; 
@@ -149,6 +150,8 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                           color: Color.fromRGBO(223, 52, 52, 0.77),
                         );
       }
+
+      widget.sm.retCode = 1;
 
       return new Center(
         child: Column(children: [                        

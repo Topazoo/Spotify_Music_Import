@@ -21,11 +21,11 @@ This application is Android compatible with an iOS build coming soon.
 ### Error Handling
 - Display messages if song lists are empty rather than blank lists
 - Display error page if user denies read privileges rather than exiting
-- Test network access before handling Spotfiy authentication
 
 ### Compatibility 
 - Collect saved music from iPhones
 - Collect all common audio formats rather than just .mp3
+- Reload songs on page change
 
 ## Requirements:
 ### Flutter Plugins:

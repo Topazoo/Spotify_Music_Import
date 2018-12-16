@@ -182,6 +182,7 @@ class Spotify_Manager {
   {
     /* Import songs to Spotify */
 
+    notFound.clear();
     List<String> ids = [];
 
     //For all selected songs
