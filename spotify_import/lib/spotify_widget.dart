@@ -33,6 +33,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     int status = widget.sm.retCode;
 
     //If not connected to Spotify
+    //TODO - Ping before opening webview
     if (status < 1)
     {
       //Embed webview in custom view
@@ -63,6 +64,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     }
 
     //Else if songs imported
+    //TODO - Add text with number of songs imported
     else if (status == 2)
     {
       return new Center(
@@ -70,7 +72,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
           children: [
             new Expanded(child: new ListView.builder(
               //Set the count
-              itemCount: widget.sm.found.length,
+              itemCount: widget.sm.notFound.length,
 
               shrinkWrap: true,
 
@@ -82,9 +84,9 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                   children: <Widget>[
                     new ListTile(
                       //Add audio file title and artist to list item
-                      title: new Text('${widget.sm.found[index].title}'),
+                      title: new Text('${widget.sm.notFound[index].title}'),
 
-                      subtitle: new Text('${widget.sm.found[index].artist}'),
+                      subtitle: new Text('${widget.sm.notFound[index].artist}'),
                     ),
 
                     new Divider(height: 2.0,),

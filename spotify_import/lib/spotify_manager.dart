@@ -32,7 +32,7 @@ class Spotify_Manager {
   
   State<Spotify_Widget> wid;
   Audio_FS.Audio_Filesystem files;
-  List<Audio_FS.Audio_File> found = new List<Audio_FS.Audio_File>();
+  List<Audio_FS.Audio_File> notFound = new List<Audio_FS.Audio_File>();
 
   Token token;
 
@@ -159,21 +159,30 @@ class Spotify_Manager {
     return queryStart;
   }
 
-  void add_by_ids(String track_uri) async
+  String parse_id(String raw_id)
   {
-    /* Add track to saved music */
-    
-    int id_start = track_uri.lastIndexOf('/') + 1;
-    String id = track_uri.substring(id_start);
+    /* Parse an id from a raw URI */
 
-    await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + id, 
+    int id_start = raw_id.lastIndexOf('/') + 1;
+    String id = raw_id.substring(id_start);
+
+    return id;
+  }
+
+  void add_by_ids(List<String> ids) async
+  {
+    /* Add tracks to saved music */
+    String all_ids = ids.join(",");
+
+    await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + all_ids, 
                     headers: {"Authorization": "Bearer " + token.accessToken});
-
   }
 
   void import_songs() async
   {
     /* Import songs to Spotify */
+
+    List<String> ids = [];
 
     //For all selected songs
     for(Audio_FS.Audio_File song in files.selected)
@@ -190,12 +199,19 @@ class Spotify_Manager {
       //TODO - Perform title and artist verification
       if (vals.length > 0)
       {
-        String id = vals[0]["href"].toString();
-        add_by_ids(id); //TODO - Build list of ids first
-        found.add(song);
+        String raw_id = vals[0]["href"].toString();
+        String id = parse_id(raw_id);
+        ids.add(id);
       }
+
+      //If track not found, add to list to alert user
+      else
+        notFound.add(song);
     }
 
+    //Import all found songs
+    add_by_ids(ids); 
+    
     //Update state to display imported tracks
     //TODO - Only display failed imports
     retCode = 2;

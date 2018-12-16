@@ -15,11 +15,11 @@ This application is Android compatible with an iOS build coming soon.
 
 ## TODO List:
 ### API Access
-- Send track IDs to API in bulk instead of one by one
 - Perform a more robust title and artist verification on collected songs
 - Add an asynchronous timer to refresh API access after initial token exchange
 
 ### Error Handling
+- Display the number of songs imported/number of songs that could not be imported
 - Display messages if song lists are empty rather than blank lists
 - Display error page if user denies read privileges rather than exiting
 - Display songs that could not be imported rather than songs that were imported
