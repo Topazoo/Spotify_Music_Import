@@ -19,10 +19,8 @@ This application is Android compatible with an iOS build coming soon.
 - Add an asynchronous timer to refresh API access after initial token exchange
 
 ### Error Handling
-- Display the number of songs imported/number of songs that could not be imported
 - Display messages if song lists are empty rather than blank lists
 - Display error page if user denies read privileges rather than exiting
-- Display songs that could not be imported rather than songs that were imported
 - Test network access before handling Spotfiy authentication
 
 ### Compatibility 

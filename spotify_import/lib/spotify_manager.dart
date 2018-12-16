@@ -213,7 +213,6 @@ class Spotify_Manager {
     add_by_ids(ids); 
     
     //Update state to display imported tracks
-    //TODO - Only display failed imports
     retCode = 2;
     wid.setState(() {});
   }

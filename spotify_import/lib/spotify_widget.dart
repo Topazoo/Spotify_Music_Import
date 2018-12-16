@@ -64,37 +64,99 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     }
 
     //Else if songs imported
-    //TODO - Add text with number of songs imported
     else if (status == 2)
     {
+      String resText = "";
+      Widget failed, number;
+      List<Audio_FS.Audio_File> songs;
+
+      //If all songs imported successfully
+      if (widget.sm.notFound.length == 0)
+      {
+        resText = "All songs imported successfully!";
+        failed = new Center();
+        number = new Container(child: 
+                          new Padding(padding: new EdgeInsets.fromLTRB(0, 11, 0, 7),
+                                      child: new Text(resText, 
+                                                      textAlign: TextAlign.center,
+                                                      textScaleFactor: 1.3,
+                                                      ),
+                                      ),
+                          width: double.infinity,
+                          color: Color.fromRGBO(30, 190, 54, 0.77),
+                        );
+
+        songs = widget.sm.files.selected;
+      }
+
+      else
+      {
+        int totalSongs = widget.aud.files.length + widget.aud.unknownFiles.length;
+        int totalSuccess = totalSongs - widget.sm.notFound.length;
+
+        songs = widget.sm.notFound; 
+
+        resText = "Imported " + totalSuccess.toString() + " of " + totalSongs.toString() +
+                  " songs";
+
+        failed = new Container(child: 
+                          new Padding(padding: new EdgeInsets.fromLTRB(0, 8, 0, 6),
+                                      child: new Text("Failed to import", 
+                                                      textAlign: TextAlign.center,
+                                                      textScaleFactor: 1.2,
+                                                      ),
+                                      ),
+                          width: double.infinity,
+                        );
+
+        number = new Container(child: 
+                          new Padding(padding: new EdgeInsets.fromLTRB(0, 11, 0, 7),
+                                      child: new Text(resText, 
+                                                      textAlign: TextAlign.center,
+                                                      textScaleFactor: 1.3,
+                                                      ),
+                                      ),
+                          width: double.infinity,
+                          color: Color.fromRGBO(223, 52, 52, 0.77),
+                        );
+      }
+
       return new Center(
-        child: Column(
-          children: [
-            new Expanded(child: new ListView.builder(
-              //Set the count
-              itemCount: widget.sm.notFound.length,
+        child: Column(children: [                        
+            
+            failed,
 
-              shrinkWrap: true,
+            new Divider(height: 2.0, color: Colors.black,),
 
-              //Set function used to build the list
-              itemBuilder: (BuildContext context, int index) 
-              {
-                return new Column(
-                  //Create list item widgets 
-                  children: <Widget>[
-                    new ListTile(
-                      //Add audio file title and artist to list item
-                      title: new Text('${widget.sm.notFound[index].title}'),
+            new Expanded(child: new Container(child: 
+                                              new ListView.builder(
+                                                //Set the count
+                                                itemCount: songs.length,
 
-                      subtitle: new Text('${widget.sm.notFound[index].artist}'),
-                    ),
+                                                shrinkWrap: true,
 
-                    new Divider(height: 2.0,),
+                                                //Set function used to build the list
+                                                itemBuilder: (BuildContext context, int index) 
+                                                {
+                                                  return new Column(
+                                                    //Create list item widgets 
+                                                    children: <Widget>[
+                                                      new ListTile(
+                                                        //Add audio file title and artist to list item
+                                                        title: new Text('${songs[index].title}'),
 
-                  ],
-                );
-              },
-            )),
+                                                        subtitle: new Text('${songs[index].artist}'),
+                                                      ),
+
+                                                      new Divider(height: 2.0,),
+
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                          ),
+              number,
           ]
         )
       );
