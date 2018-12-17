@@ -22,7 +22,6 @@ This application is Android compatible with an iOS build coming soon.
 
 ### Compatibility 
 - Collect saved music from iPhones using the Apple Music API
-- Collect all common audio formats rather than just .mp3
 
 ## Requirements:
 ### Flutter Plugins:

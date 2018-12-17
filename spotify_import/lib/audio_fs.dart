@@ -17,6 +17,8 @@ class Audio_File {
 
 class Audio_Filesystem {
 
+  List<String> exts = ["mp3", "aac", "wav", "ogg", "wma", "flac"];
+
   Map<String, Audio_File> cached = new Map<String, Audio_File>();
 
   //List of currently selected files
@@ -106,7 +108,7 @@ class Audio_Filesystem {
         int extStart = strForm.lastIndexOf('.') + 1;
         
         //Parse music files and add to list - All files initially selected
-        if (strForm.substring(extStart, strForm.length - 1) == "mp3") //TODO - All music files
+        if (exts.contains(strForm.substring(extStart, strForm.length - 1)))
         {
           Audio_File file = parse_android_file(entity);
 
