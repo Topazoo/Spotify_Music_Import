@@ -197,19 +197,59 @@ class Spotify_Manager {
     return json.encode(playlist);
   }
 
-  void add_all(List<List<String>> ids) async
+  List<List<String>> package(List<String> all, int size)
   {
-    /* Add tracks to saved music */
-    String all_ids = ids[0].join(",");
-    String all_URIs = ids[1].join(",");
+    /* Package a list in chunks of a set size */
 
-    //Add tracks to library
+    List<List<String>> package = [];
+
+    //Loop adding lists of 50 to final list
+    int lastEnd = 0;
+    while(all.length - lastEnd > size)
+    {
+      Iterable<String> currIt = all.getRange(lastEnd, size + lastEnd);
+      List<String> curr = currIt.toList();
+
+      package.add(curr);
+      lastEnd += curr.length;
+    }
+
+    //Add any leftover elements
+    int rem = all.length - lastEnd;
+    if(rem > 0)
+    {
+      Iterable<String> currIt = all.getRange(lastEnd, rem + lastEnd);
+      List<String> curr = currIt.toList();
+      package.add(curr);
+    }
+
+    return package;
+  }
+
+  Future package_and_add(List<List<String>> idsandUris) async
+  {
+    /* Split the Ids and URI's into chunks and add them */
+
+    List<List<String>> p_ids = package(idsandUris[0], 50);
+    List<List<String>> p_uris = package(idsandUris[1], 100);
+
     if(options.toLibrary)
-      await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + all_ids, 
-                      headers: {"Authorization": "Bearer " + token.accessToken});
+    {
+      for(List<String> p_id in p_ids)
+      {
+        Map id_map = {};
+        id_map["ids"] = p_id;
 
-    //Add tracks to playlist
-    if (options.toPlaylist)
+        //Add all packaged IDs to library
+        HTTP.put("https://api.spotify.com/v1/me/tracks", 
+                  headers: {"Authorization": "Bearer " + token.accessToken,
+                            "Content-Type": "application/json"},
+                  body: jsonEncode(id_map)
+                );
+      }
+    }
+
+    if(options.toPlaylist)
     {
       //Get user ID
       HTTP.Response resp = await HTTP.get("https://api.spotify.com/v1/me",
@@ -226,11 +266,20 @@ class Spotify_Manager {
       //Get playlist ID
       respJSON = jsonDecode(resp.body);
       String playlistID = respJSON["id"];
+      
+      //Add all packaged URIs to playlist
+      for(List<String> p_uri in p_uris)
+      {
+        Map uri_map = {};
+        uri_map["uris"] = p_uri;
 
-      //Add tracks to playlist
-      await HTTP.post("https://api.spotify.com/v1/playlists/" + playlistID +"/tracks?uris=" + all_URIs, 
-                       headers: {"Authorization": "Bearer " + token.accessToken});
-
+        //Add tracks to playlist
+        await HTTP.post("https://api.spotify.com/v1/playlists/" + playlistID +"/tracks", 
+                        headers: {"Authorization": "Bearer " + token.accessToken,
+                                  "Content-Type": "application/json"},
+                        body: jsonEncode(uri_map)
+                       );
+      }
     }
 
   }
@@ -273,7 +322,7 @@ class Spotify_Manager {
     }
 
     //Import all found songs
-    add_all(idsandURIs); 
+    await package_and_add(idsandURIs);
     
     //Update state to display imported tracks
     retCode = 2;
