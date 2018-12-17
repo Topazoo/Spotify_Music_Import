@@ -19,12 +19,14 @@ This application is Android compatible with an iOS build coming soon.
 - Add an asynchronous timer to refresh API access after initial token exchange
 
 ### Error Handling
-- Display messages if song lists are empty rather than blank lists
 - Display error page if user denies read privileges rather than exiting
 
 ### Compatibility 
 - Collect saved music from iPhones
 - Collect all common audio formats rather than just .mp3
+
+## Features
+- Allow songs to be added to a new playlist
 
 ## Requirements:
 ### Flutter Plugins:

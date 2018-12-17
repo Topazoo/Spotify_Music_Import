@@ -37,9 +37,25 @@ class _Music_List_Widget_Known extends State<Music_List_Widget_Known> with Widge
 
   @override
   Widget build(BuildContext context) {
+    if (widget.aud.files.length == 0)
+      return new Center(child: new Text("No known songs found", textScaleFactor: 1.3,),);
+
     return new Center(
       child: Column(
         children: [
+
+          new Container(child: 
+                          new Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: new Text("Known songs", 
+                                                      textAlign: TextAlign.center,
+                                                      textScaleFactor: 1.2,
+                                                      ),
+                                      ),
+                          width: double.infinity,
+                        ),
+
+          new Divider(color: Colors.black54,),
+
           new Expanded(child: new ListView.builder(
             //Set the count
             itemCount: widget.aud.files.length,
@@ -124,9 +140,25 @@ class _Music_List_Widget_Unknown extends State<Music_List_Widget_Unknown> with W
 
   @override
   Widget build(BuildContext context) {
+    if (widget.aud.unknownFiles.length == 0)
+      return new Center(child: new Text("No unknown songs found", textScaleFactor: 1.3,),);
+
     return new Center(
       child: Column(
-        children: [          
+        children: [  
+          
+          new Container(child: 
+                          new Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: new Text("Unknown songs", 
+                                                      textAlign: TextAlign.center,
+                                                      textScaleFactor: 1.2,
+                                                      ),
+                                      ),
+                          width: double.infinity,
+                        ),
+
+          new Divider(color: Colors.black54,),
+        
           new Expanded(child: new ListView.builder(
             //Set the count
             itemCount: widget.aud.unknownFiles.length,

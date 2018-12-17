@@ -4,7 +4,6 @@ import 'connection_uitility.dart';
 import 'spotify_manager.dart';
 import 'theme.dart' as AppTheme;
 import 'audio_fs.dart' as Audio_FS;
-import 'package:flutter/services.dart';
 
 class Spotify_Widget extends StatefulWidget {
   /* Homepage widget that attaches to root */
@@ -84,13 +83,18 @@ class _Spotify_Widget extends State<Spotify_Widget> {
       widget.webview.close();
 
       //Show import button
-      return new Center(child: new RaisedButton(
-                          color: AppTheme.MainThemeSwatch.swatch,
-                          textColor: Colors.white,
-                          child: new Text("Import Songs", textScaleFactor: 2.0,),
-                          onPressed: widget.sm.import_songs,
-                          padding: new EdgeInsets.fromLTRB(60.0, 25.0, 60.0, 25.0),)
-                        );
+      return new Align(child: new Row(children: [ 
+                                new Expanded(child: new RaisedButton(
+                                  color: AppTheme.MainThemeSwatch.swatch,
+                                  textColor: Colors.white,
+                                  child: new Text("Import Songs", textScaleFactor: 2.0,),
+                                  onPressed: widget.sm.import_songs,
+                                  padding: new EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+                                  )) 
+                              ],
+                            ),
+                            alignment: Alignment.bottomCenter,
+                          );
     }
 
     //Else if songs imported
