@@ -16,13 +16,12 @@ This application is Android compatible with an iOS build coming soon.
 ## TODO List:
 ### API Access
 - Perform a more robust title and artist verification on collected songs
-- Add an asynchronous timer to refresh API access after initial token exchange
 
 ### Error Handling
 - Display error page if user denies read privileges rather than exiting
 
 ### Compatibility 
-- Collect saved music from iPhones
+- Collect saved music from iPhones using the Apple Music API
 - Collect all common audio formats rather than just .mp3
 
 ## Requirements:

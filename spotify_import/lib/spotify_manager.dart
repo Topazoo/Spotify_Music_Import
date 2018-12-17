@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'spotify_widget.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 import 'package:http/http.dart' as HTTP;
 import 'audio_fs.dart' as Audio_FS;
 
@@ -22,9 +23,39 @@ class Token
   String refreshToken;
   int expTime;
 
-  Token({this.accessToken, this.refreshToken, this.expTime});
+  String client;
+  String secret;
 
-  //TODO - Add Asynchronous timer that autorefreshes
+  Timer timer;
+
+  Token(String accessToken, String refreshToken, int expTime, String client, String secret)
+  {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+    this.expTime = expTime;
+    this.client = client;
+    this.secret = secret;
+    this.timer = new Timer(new Duration(seconds: expTime - 1), refresh); 
+  }
+
+  void refresh() async
+  {
+    /* Refresh the auth token when it expires */
+
+    //Get new token
+    HTTP.Response response = await HTTP.post("https://accounts.spotify.com/api/token", 
+      body: {"grant_type": "refresh_token", "refresh_token": refreshToken, 
+             "client_id": client, "client_secret": secret}
+    );
+
+    //Store token info
+    Map resp_JSON = jsonDecode(response.body);
+    this.expTime = resp_JSON["expires_in"];
+    this.accessToken = resp_JSON["access_token"];
+
+    //Restart timer
+    this.timer = new Timer(new Duration(seconds: this.expTime - 1), refresh);
+  }
 }
 
 class Spotify_Manager {
@@ -142,8 +173,8 @@ class Spotify_Manager {
     {
       //If valid, get body contents and create Token
       Map body = jsonDecode(response.body);
-      token = new Token(accessToken: body["access_token"], refreshToken: body["refresh_token"], 
-                        expTime: body["expires_in"]);
+      token = new Token(body["access_token"], body["refresh_token"], 
+                        body["expires_in"], client, secret);
 
       //Update state to display imprt button
       retCode = 1;
