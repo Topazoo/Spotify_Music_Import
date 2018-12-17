@@ -6,6 +6,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as HTTP;
 import 'audio_fs.dart' as Audio_FS;
 
+class Import_Options
+{
+  bool toPlaylist = false;
+  bool toLibrary = true;
+  String playlistName = "Imported Songs";
+}
+
 class Token
 {
   /* Class containing token info that automatically refreshes */

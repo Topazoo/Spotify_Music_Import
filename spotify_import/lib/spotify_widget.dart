@@ -29,6 +29,15 @@ class Spotify_Widget extends StatefulWidget {
 class _Spotify_Widget extends State<Spotify_Widget> {
 
   Connection_Manager mngr = new Connection_Manager();
+  Import_Options options = new Import_Options();
+  final textController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is disposed
+    textController.dispose();
+    super.dispose();
+  }
 
   //Function to pass to connection manager
   void update()
@@ -79,22 +88,99 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     //If connected to Spotify
     else if (status == 1)
     {
+      Widget playlistField;
       //Close webview
       widget.webview.close();
 
+      if (options.toPlaylist)
+        playlistField = new Column(children:
+                        [
+                          new Padding(
+                            padding: new EdgeInsets.fromLTRB(16, 16, 16, 20),
+                            child: TextField(
+                              controller: textController,
+                              style: TextStyle(fontSize: 20, color: Colors.black),
+                              decoration: InputDecoration(
+                                            labelText: "Enter a playlist name:",
+                                            labelStyle: TextStyle(fontSize: 20, height: -.5),
+                                            hintText: options.playlistName,  
+                                            ),
+                              autofocus: true,
+                                          ),
+                          ),
+                          new Divider(height: 2.0,),
+                        ]
+                      );
+      else
+        playlistField = new Center();
+
       //Show import button
-      return new Align(child: new Row(children: [ 
-                                new Expanded(child: new RaisedButton(
-                                  color: AppTheme.MainThemeSwatch.swatch,
-                                  textColor: Colors.white,
-                                  child: new Text("Import Songs", textScaleFactor: 2.0,),
-                                  onPressed: widget.sm.import_songs,
-                                  padding: new EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+      return new Column(children: 
+                        [
+                          new SwitchListTile(
+                            //Add audio file title and artist to list item
+                            title: new Text("Add songs to library", 
+                                            style: new TextStyle(fontSize: 20),),
+
+                            value: options.toLibrary, 
+
+                            //Set the function for when an item is selected
+                            onChanged: (bool value) 
+                            {
+                              setState(() 
+                              { 
+                                if (options.toLibrary)
+                                  options.toLibrary = false;
+                                else
+                                  options.toLibrary = true;
+                              });
+                            },
+                          ),
+
+                          new Divider(height: 2.0,),
+
+                          new SwitchListTile(
+                            //Add audio file title and artist to list item
+                            title: new Text("Add songs to playlist",
+                                            style: new TextStyle(fontSize: 20),),
+
+                            value: options.toPlaylist,
+
+                            //Set the function for when an item is selected
+                            onChanged: (bool value) 
+                            {
+                              setState(() 
+                              { 
+                                if (options.toPlaylist)
+                                  options.toPlaylist = false;
+                                else
+                                  options.toPlaylist = true;
+                              });
+                            },
+                          ),
+
+                          new Divider(height: 2.0,),
+
+                          playlistField,
+
+                          new Expanded(child: 
+                            new Align(child: 
+                              new Row(children: 
+                                [ 
+                                  new Expanded(child: new RaisedButton(
+                                    color: AppTheme.MainThemeSwatch.swatch,
+                                    textColor: Colors.white,
+                                    child: new Text("Import Songs", textScaleFactor: 2.0,),
+                                    onPressed: widget.sm.import_songs,
+                                    padding: new EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
                                   )) 
-                              ],
+                                ],
+                              ),
+                              alignment: Alignment.bottomCenter,
                             ),
-                            alignment: Alignment.bottomCenter,
-                          );
+                          )
+                        ],
+                      );
     }
 
     //Else if songs imported
