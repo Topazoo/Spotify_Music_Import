@@ -15,6 +15,8 @@ This application is Android compatible with an iOS build coming soon.
 
 ## TODO List:
 ### API Access
+- Split list of tracks into chunks of 100 URIs and pass in POST body when added to playlist
+- Split list of tracks into chunks of 50 IDs and pass in POST body when added to library
 - Perform a more robust title and artist verification on collected songs
 - Add an asynchronous timer to refresh API access after initial token exchange
 
@@ -24,9 +26,6 @@ This application is Android compatible with an iOS build coming soon.
 ### Compatibility 
 - Collect saved music from iPhones
 - Collect all common audio formats rather than just .mp3
-
-## Features
-- Allow songs to be added to a new playlist
 
 ## Requirements:
 ### Flutter Plugins:

@@ -24,20 +24,12 @@ class Spotify_Widget extends StatefulWidget {
     
     return wid;
   }
+
 }
 
 class _Spotify_Widget extends State<Spotify_Widget> {
 
   Connection_Manager mngr = new Connection_Manager();
-  Import_Options options = new Import_Options();
-  final textController = TextEditingController();
-
-  @override
-  void dispose() {
-    // Clean up the controller when the Widget is disposed
-    textController.dispose();
-    super.dispose();
-  }
 
   //Function to pass to connection manager
   void update()
@@ -92,18 +84,18 @@ class _Spotify_Widget extends State<Spotify_Widget> {
       //Close webview
       widget.webview.close();
 
-      if (options.toPlaylist)
+      if (widget.sm.options.toPlaylist)
         playlistField = new Column(children:
                         [
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(16, 16, 16, 20),
                             child: TextField(
-                              controller: textController,
+                              controller: widget.sm.options.textController,
                               style: TextStyle(fontSize: 20, color: Colors.black),
                               decoration: InputDecoration(
                                             labelText: "Enter a playlist name:",
                                             labelStyle: TextStyle(fontSize: 20, height: -.5),
-                                            hintText: options.playlistName,  
+                                            hintText: widget.sm.options.playlistName,  
                                             ),
                               autofocus: true,
                                           ),
@@ -122,17 +114,17 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                             title: new Text("Add songs to library", 
                                             style: new TextStyle(fontSize: 20),),
 
-                            value: options.toLibrary, 
+                            value: widget.sm.options.toLibrary, 
 
                             //Set the function for when an item is selected
                             onChanged: (bool value) 
                             {
                               setState(() 
                               { 
-                                if (options.toLibrary)
-                                  options.toLibrary = false;
+                                if (widget.sm.options.toLibrary)
+                                  widget.sm.options.toLibrary = false;
                                 else
-                                  options.toLibrary = true;
+                                  widget.sm.options.toLibrary = true;
                               });
                             },
                           ),
@@ -144,17 +136,17 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                             title: new Text("Add songs to playlist",
                                             style: new TextStyle(fontSize: 20),),
 
-                            value: options.toPlaylist,
+                            value: widget.sm.options.toPlaylist,
 
                             //Set the function for when an item is selected
                             onChanged: (bool value) 
                             {
                               setState(() 
                               { 
-                                if (options.toPlaylist)
-                                  options.toPlaylist = false;
+                                if (widget.sm.options.toPlaylist)
+                                  widget.sm.options.toPlaylist = false;
                                 else
-                                  options.toPlaylist = true;
+                                  widget.sm.options.toPlaylist = true;
                               });
                             },
                           ),
@@ -186,6 +178,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     //Else if songs imported
     else if (status == 2)
     {
+      widget.webview.close();
 
       String resText = "";
       Widget failed, number;
@@ -201,10 +194,12 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                                       child: new Text(resText, 
                                                       textAlign: TextAlign.center,
                                                       textScaleFactor: 1.3,
+                                                      style: new TextStyle(color:
+                                                         AppTheme.MainThemeSwatch.swatch,
+                                                         height: 2),
                                                       ),
                                       ),
                           width: double.infinity,
-                          color: Color.fromRGBO(30, 190, 54, 0.77),
                         );
 
         songs = widget.sm.files.selected;
@@ -235,14 +230,14 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                                       child: new Text(resText, 
                                                       textAlign: TextAlign.center,
                                                       textScaleFactor: 1.3,
+                                                      style: new TextStyle(color:
+                                                         Colors.red,
+                                                         height: 2),                                                      
                                                       ),
                                       ),
                           width: double.infinity,
-                          color: Color.fromRGBO(223, 52, 52, 0.77),
                         );
       }
-
-      widget.sm.retCode = 1;
 
       return new Center(
         child: Column(children: [                        
@@ -280,6 +275,19 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                                             ),
                           ),
               number,
+
+              new Row(children: 
+                [ 
+                  new Expanded(child: new RaisedButton(
+                    color: AppTheme.MainThemeSwatch.swatch,
+                    textColor: Colors.white,
+                    child: new Text("Done", textScaleFactor: 2.0,),
+                    onPressed: (){widget.sm.retCode = 1; update();},
+                    padding: new EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+                  )) 
+                ],
+              ),
+
           ]
         )
       );

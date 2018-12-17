@@ -11,6 +11,7 @@ class Import_Options
   bool toPlaylist = false;
   bool toLibrary = true;
   String playlistName = "Imported Songs";
+  final textController = new TextEditingController();
 }
 
 class Token
@@ -42,6 +43,7 @@ class Spotify_Manager {
   List<Audio_FS.Audio_File> notFound = new List<Audio_FS.Audio_File>();
 
   Token token;
+  Import_Options options = new Import_Options();
 
   Spotify_Manager()
   {
@@ -176,13 +178,61 @@ class Spotify_Manager {
     return id;
   }
 
-  void add_by_ids(List<String> ids) async
+  String build_playlist_JSON()
+  {
+    /* Create the JSON required for a new playlis */
+
+    String name;
+
+    if (options.textController.text.length > 0)
+      name = options.textController.text;
+    else
+      name = options.playlistName;
+
+    Map playlist = {};
+    playlist["name"] = name;
+    playlist["public"] = false;
+    playlist["description"] = "Created with Spotify Import";
+
+    return json.encode(playlist);
+  }
+
+  void add_all(List<List<String>> ids) async
   {
     /* Add tracks to saved music */
-    String all_ids = ids.join(",");
+    String all_ids = ids[0].join(",");
+    String all_URIs = ids[1].join(",");
 
-    await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + all_ids, 
-                    headers: {"Authorization": "Bearer " + token.accessToken});
+    //Add tracks to library
+    if(options.toLibrary)
+      await HTTP.put("https://api.spotify.com/v1/me/tracks?ids=" + all_ids, 
+                      headers: {"Authorization": "Bearer " + token.accessToken});
+
+    //Add tracks to playlist
+    if (options.toPlaylist)
+    {
+      //Get user ID
+      HTTP.Response resp = await HTTP.get("https://api.spotify.com/v1/me",
+                                          headers: {"Authorization": "Bearer " + token.accessToken});
+      Map respJSON = jsonDecode(resp.body);
+      String uID = respJSON["id"];
+
+      //Create playlist
+      resp = await HTTP.post("https://api.spotify.com/v1/users/" + uID +"/playlists",
+                      headers: {"Authorization": "Bearer " + token.accessToken,
+                                "Content-Type": "application/json"},
+                      body: build_playlist_JSON());
+      
+      //Get playlist ID
+      respJSON = jsonDecode(resp.body);
+      String playlistID = respJSON["id"];
+
+      //Add tracks to playlist
+      await HTTP.post("https://api.spotify.com/v1/playlists/" + playlistID +"/tracks?uris=" + all_URIs, 
+                       headers: {"Authorization": "Bearer " + token.accessToken});
+
+    }
+
   }
 
   void import_songs() async
@@ -190,7 +240,7 @@ class Spotify_Manager {
     /* Import songs to Spotify */
 
     notFound.clear();
-    List<String> ids = [];
+    List<List<String>> idsandURIs = [[],[]];
 
     //For all selected songs
     for(Audio_FS.Audio_File song in files.selected)
@@ -207,9 +257,14 @@ class Spotify_Manager {
       //TODO - Perform title and artist verification
       if (vals.length > 0)
       {
+        //Get track details
         String raw_id = vals[0]["href"].toString();
+        String uri = vals[0]["uri"].toString();
         String id = parse_id(raw_id);
-        ids.add(id);
+        
+        //Add URIs and IDs
+        idsandURIs[0].add(id);
+        idsandURIs[1].add(uri);
       }
 
       //If track not found, add to list to alert user
@@ -218,7 +273,7 @@ class Spotify_Manager {
     }
 
     //Import all found songs
-    add_by_ids(ids); 
+    add_all(idsandURIs); 
     
     //Update state to display imported tracks
     retCode = 2;
