@@ -1,4 +1,5 @@
 import 'dart:io' as IO;
+import 'package:flutter/services.dart';
 
 class Audio_File {
   /* Contains information about audio file */
@@ -53,14 +54,6 @@ class Audio_Filesystem {
       iPhone_fetch();
   }
 
-  List<Audio_File> iPhone_fetch()
-  {
-    /* Fetch iPhone music library */
-    // TODO - IMPLEMENT
-
-    return null;
-  }
-
   List<String> parse_android_info(String fullName)
   {
       /* Parse title and artist
@@ -87,6 +80,22 @@ class Audio_Filesystem {
       }
 
       return [title, artist];
+  }
+
+  void iPhone_fetch() async
+  {
+    /* Fetch iPhone music library */
+
+    print("Fetching iOS library");
+
+    const platform = const MethodChannel('flutter.io.media/get_media');
+
+    try {
+      final int result = await platform.invokeMethod('get_media');
+      print(result);
+    } on PlatformException catch (e) {
+      print("Failed to get audio files: '${e.message}'.");
+    }
   }
 
   void android_fetch() 

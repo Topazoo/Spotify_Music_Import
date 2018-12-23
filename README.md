@@ -11,8 +11,6 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 
 <b>This application is a work in progress.</b>
 
-This application is Android compatible with an iOS build coming soon.
-
 ## TODO List:
 ### Spotify API Access
 - Perform a more robust title and artist verification on collected songs
@@ -23,6 +21,7 @@ This application is Android compatible with an iOS build coming soon.
 
 ### Compatibility 
 - Collect saved music from iPhones using the Apple Music API
+- Fit webview to devices of different sizes
 
 ## Requirements:
 ### Flutter Plugins:
