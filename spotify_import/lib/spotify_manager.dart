@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show rootBundle, MethodChannel;
 import 'package:flutter/material.dart';
 import 'spotify_widget.dart';
 import 'dart:io';
@@ -84,14 +84,8 @@ class Spotify_Manager {
     get_auth();
   }
 
-  void get_auth() async
+  void handle_auth_android(String client, String secret)
   {
-    /* Run callback server and authenticate with Spotify */
-
-    //Get Spotify API info
-    client = await load_env("client");
-    secret = await load_env("secret");
-
     //Run integrated server to handle Spotify callback
     run_server();
 
@@ -100,6 +94,27 @@ class Spotify_Manager {
     authUrl += "&response_type=code";
     authUrl += "&redirect_uri=" + callback;
     authUrl += "&scope=" + scopes; 
+  }
+
+  void handle_auth_iOS() async
+  {
+    print("Handling iOS authentication");
+    
+    const platform = const MethodChannel('flutter.io.media/get_auth');
+    final String auth_info = await platform.invokeMethod('get_auth');
+    print(auth_info);
+  }
+
+  void get_auth() async
+  {
+    /* Run callback server and authenticate with Spotify */
+
+    //Get Spotify API info
+    client = await load_env("client");
+    secret = await load_env("secret");
+
+    if(Platform.isAndroid)
+      handle_auth_android(client, secret);
   }
 
   Future<String> load_env(String param) async

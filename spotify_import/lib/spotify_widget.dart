@@ -5,6 +5,7 @@ import 'spotify_manager.dart';
 import 'theme.dart' as AppTheme;
 import 'audio_fs.dart' as Audio_FS;
 import 'webview_builder.dart';
+import 'dart:io' as IO;
 
 class Spotify_Widget extends StatefulWidget {
   /* Homepage widget that attaches to root */
@@ -45,34 +46,42 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     //If not connected to Spotify
     if (status < 1)
     {
-      //If connected, open webview
-      if(mngr.isCompleted && mngr.isConnected)
+      if(IO.Platform.isAndroid)
       {
-        //Embed webview in custom view
-        Rect newRect = get_device_rect(context);
+        //If connected, open webview
+        if(mngr.isCompleted && mngr.isConnected)
+        {
+          //Embed webview in custom view
+          Rect newRect = get_device_rect(context);
 
-        //Launch webview
-        widget.webview.launch(widget.sm.authUrl, rect: newRect);
+          //Launch webview
+          widget.webview.launch(widget.sm.authUrl, rect: newRect);
 
-        //Empty placeholder under webview
-        return Center(heightFactor: 0, widthFactor: 0,);
+          //Empty placeholder under webview
+          return Center(heightFactor: 0, widthFactor: 0,);
+        }
+        //Should never reach this
+        else if(mngr.isCompleted && !mngr.isConnected)
+        {
+          return new Center(child: new Text("Not connected"),);
+        }
+        //Wait for connection
+        else
+        {
+          if (!mngr.inProgress)
+          {
+            mngr.test_connect(update);
+            mngr.inProgress = true;
+          }
+
+          return new Center(child: new Text("Attempting to connect to Spotify server...", 
+                                    textScaleFactor: 1.2,));
+        }
       }
-      //Should never reach this
-      else if(mngr.isCompleted && !mngr.isConnected)
-      {
-        return new Center(child: new Text("Not connected"),);
-      }
-      //Wait for connection
       else
       {
-        if (!mngr.inProgress)
-        {
-          mngr.test_connect(update);
-          mngr.inProgress = true;
-        }
-
-        return new Center(child: new Text("Attempting to connect to Spotify server...", 
-                                  textScaleFactor: 1.2,));
+        widget.sm.handle_auth_iOS();
+        return new Center(child: new Text("iOS Connection manager"),);
       }
     }
 

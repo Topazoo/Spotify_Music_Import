@@ -12,6 +12,9 @@ import MediaPlayer
       
       let mediaChannel = FlutterMethodChannel(name: "flutter.io.media/get_media",
                                               binaryMessenger: controller)
+      let authChannel = FlutterMethodChannel(name: "flutter.io.media/get_auth",
+                                              binaryMessenger: controller)
+                                  
       mediaChannel.setMethodCallHandler({
         [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
         guard call.method == "get_media" else {
@@ -19,6 +22,15 @@ import MediaPlayer
           return
         }
         self?.get_media(result: result)
+      })
+
+      authChannel.setMethodCallHandler({
+        [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
+        guard call.method == "get_auth" else {
+          result(FlutterMethodNotImplemented)
+          return
+        }
+        self?.get_auth(result: result)
       })
 
       GeneratedPluginRegistrant.register(with: self)
@@ -33,5 +45,9 @@ import MediaPlayer
 
     let nsSongDict = songsDict as NSDictionary
     result(nsSongDict)
+  }
+
+  private func get_auth(result: FlutterResult) { 
+    result(String("Fetching auth using Swift"))
   }
 }
