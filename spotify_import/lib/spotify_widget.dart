@@ -4,6 +4,7 @@ import 'connection_uitility.dart';
 import 'spotify_manager.dart';
 import 'theme.dart' as AppTheme;
 import 'audio_fs.dart' as Audio_FS;
+import 'webview_builder.dart';
 
 class Spotify_Widget extends StatefulWidget {
   /* Homepage widget that attaches to root */
@@ -24,7 +25,6 @@ class Spotify_Widget extends StatefulWidget {
     
     return wid;
   }
-
 }
 
 class _Spotify_Widget extends State<Spotify_Widget> {
@@ -49,8 +49,7 @@ class _Spotify_Widget extends State<Spotify_Widget> {
       if(mngr.isCompleted && mngr.isConnected)
       {
         //Embed webview in custom view
-        Rect newRect = new Rect.fromLTWH(0.0, 80.0, 
-                  MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - 135);
+        Rect newRect = get_device_rect(context);
 
         //Launch webview
         widget.webview.launch(widget.sm.authUrl, rect: newRect);
