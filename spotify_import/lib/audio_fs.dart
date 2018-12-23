@@ -36,17 +36,17 @@ class Audio_Filesystem {
     collect_files();
   }
 
-  void collect_files()
+  void collect_files() async
   {
     /* Get all audio files  */
 
-    fetch_audio();
+    await fetch_audio();
     
     files.sort((a, b) => a.artist.compareTo(b.artist));
     unknownFiles.sort((a, b) => a.title.compareTo(b.title));
   }
 
-  List<Audio_File> fetch_audio()
+  void fetch_audio() async
   {
     /* Allow for cross-platform audio file retrieval */
     
@@ -54,7 +54,7 @@ class Audio_Filesystem {
       android_fetch();
     else
     {
-      iPhone_fetch();
+      await iPhone_fetch();
       ret_complete_iOS = true;
     }
   }
@@ -93,13 +93,16 @@ class Audio_Filesystem {
 
     if (!ret_complete_iOS)
     {
-      print("Fetching iOS library");
-
       const platform = const MethodChannel('flutter.io.media/get_media');
 
       try {
         final Map result = await platform.invokeMethod('get_media');
-        print(result);
+        result.forEach((title, artist)
+        {
+          Audio_File newFile = new Audio_File(title, artist, null);
+          files.add(newFile);
+          selected.add(newFile);
+        });
       } on PlatformException catch (e) {
         print("Failed to get audio files: '${e.message}'.");
       }

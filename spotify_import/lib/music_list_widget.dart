@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'audio_fs.dart' as Audio_FS;
+import 'dart:io' as IO;
 
 class Music_List_Widget_Known extends StatefulWidget {
   /* Homepage widget that attaches to root */
@@ -23,7 +24,9 @@ class _Music_List_Widget_Known extends State<Music_List_Widget_Known> with Widge
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     setState(() {
-      if(state == AppLifecycleState.resumed)
+      if(state == AppLifecycleState.resumed && 
+        IO.Platform.isAndroid)
+        
         widget.aud.collect_files();
       });
   }

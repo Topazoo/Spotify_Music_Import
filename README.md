@@ -17,10 +17,10 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 
 ### Error Handling
 - Display error page if user denies read privileges rather than exiting
-- Perform verifications on all HTTP requests to ensure transactions successfull
+- Perform verifications on all HTTP requests to ensure transactions successful
+- Fix keyboard issues with iOS webview
 
 ### Compatibility 
-- Collect saved music from iPhones using the Apple Music API
 - Fit webview to devices of different sizes
 
 ## Requirements:
