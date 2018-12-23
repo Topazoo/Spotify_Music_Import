@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import MediaPlayer
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -24,7 +25,13 @@ import Flutter
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  private func get_media(result: FlutterResult) {
-    result(Int(100))
+  private func get_media(result: FlutterResult) { 
+    var songsDict = [String: String]()
+    for song in MPMediaQuery.songs().items! {
+      songsDict[String(song.title!)] = String(song.artist!)
+    }
+
+    let nsSongDict = songsDict as NSDictionary
+    result(nsSongDict)
   }
 }

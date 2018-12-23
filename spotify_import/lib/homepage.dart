@@ -37,6 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     /* Build the contents of the homepage widget */
 
+    //am.iPhone_fetch(); //TODO - DELETE
+
     //Close webview if open
     widget.webview.close();
 

@@ -29,6 +29,8 @@ class Audio_Filesystem {
   //List of unknown files
   List<Audio_File> unknownFiles = new List<Audio_File>();
 
+  bool ret_complete_iOS = false;
+
   Audio_Filesystem()
   {
     collect_files();
@@ -51,7 +53,10 @@ class Audio_Filesystem {
     if (IO.Platform.isAndroid)
       android_fetch();
     else
+    {
       iPhone_fetch();
+      ret_complete_iOS = true;
+    }
   }
 
   List<String> parse_android_info(String fullName)
@@ -86,15 +91,18 @@ class Audio_Filesystem {
   {
     /* Fetch iPhone music library */
 
-    print("Fetching iOS library");
+    if (!ret_complete_iOS)
+    {
+      print("Fetching iOS library");
 
-    const platform = const MethodChannel('flutter.io.media/get_media');
+      const platform = const MethodChannel('flutter.io.media/get_media');
 
-    try {
-      final int result = await platform.invokeMethod('get_media');
-      print(result);
-    } on PlatformException catch (e) {
-      print("Failed to get audio files: '${e.message}'.");
+      try {
+        final Map result = await platform.invokeMethod('get_media');
+        print(result);
+      } on PlatformException catch (e) {
+        print("Failed to get audio files: '${e.message}'.");
+      }
     }
   }
 
