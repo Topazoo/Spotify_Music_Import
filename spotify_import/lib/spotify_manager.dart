@@ -76,6 +76,11 @@ class Spotify_Manager {
   Token token;
   Import_Options options = new Import_Options();
 
+  double found = 0.0;
+  double imported = 0.0;
+  int total = 0;
+  int add_status = 0;
+
   Spotify_Manager()
   {
     retCode = -1;
@@ -309,7 +314,10 @@ class Spotify_Manager {
                             "Content-Type": "application/json"},
                   body: jsonEncode(id_map)
                 );
+
+        imported += p_id.length;
       }
+      
     }
 
     if(options.toPlaylist)
@@ -342,6 +350,7 @@ class Spotify_Manager {
                                   "Content-Type": "application/json"},
                         body: jsonEncode(uri_map)
                        );
+        imported += p_uri.length;
       }
     }
 
@@ -354,41 +363,65 @@ class Spotify_Manager {
     notFound.clear();
     List<List<String>> idsandURIs = [[],[]];
 
+    retCode = 2;
+    wid.setState(() {});
+
     //For all selected songs
     for(Audio_FS.Audio_File song in files.selected)
     {
       //Query Spotify API for track ID
       String query = build_search_query(song.title, song.artist);
-      HTTP.Response response = await HTTP.get(query, 
-                                headers: {"Authorization": "Bearer " + token.accessToken});
-
-      Map data = jsonDecode(response.body);
-      List<dynamic> vals = data["tracks"]["items"];
-      
-      //If track found
-      //TODO - Perform title and artist verification
-      if (vals.length > 0)
+      try
       {
-        //Get track details
-        String raw_id = vals[0]["href"].toString();
-        String uri = vals[0]["uri"].toString();
-        String id = parse_id(raw_id);
+        HTTP.Response response = await HTTP.get(query, 
+                                  headers: {"Authorization": "Bearer " + token.accessToken});
+
+        Map data = jsonDecode(response.body);
+        List<dynamic> vals = data["tracks"]["items"];
         
-        //Add URIs and IDs
-        idsandURIs[0].add(id);
-        idsandURIs[1].add(uri);
+        //If track found
+        //TODO - Perform title and artist verification
+        if (vals.length > 0)
+        {
+          //Get track details
+          String raw_id = vals[0]["href"].toString();
+          String uri = vals[0]["uri"].toString();
+          String id = parse_id(raw_id);
+          
+          //Add URIs and IDs
+          idsandURIs[0].add(id);
+          idsandURIs[1].add(uri);
+
+          if(options.toLibrary && options.toPlaylist)
+            total += 2;
+          else if(!options.toLibrary && !options.toPlaylist)
+            total += 0;
+          else
+            total += 1;
+        }
+
+        //If track not found, add to list to alert user
+        else
+          notFound.add(song);
+      }
+      catch(e)
+      {
+        notFound.add(song);
       }
 
-      //If track not found, add to list to alert user
-      else
-        notFound.add(song);
+      found += 1;
+      wid.setState(() {});
     }
+
+    add_status = 1;
+
+    wid.setState(() {});
 
     //Import all found songs
     await package_and_add(idsandURIs);
     
     //Update state to display imported tracks
-    retCode = 2;
+    retCode = 3;
     wid.setState(() {});
   }
 }

@@ -184,8 +184,48 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                       );
     }
 
-    //Else if songs imported
+    //Else if songs being imported
     else if (status == 2)
+    {
+      String prog_stat = "";
+      double prog = 0.0;
+      if(widget.sm.add_status == 0)
+      {
+        prog_stat = "Searching Spotify for Songs";
+        if(widget.sm.found == 0)
+          prog = 0;
+        else
+          prog = widget.sm.found / widget.aud.selected.length.toDouble();
+      }
+      else
+      {
+        prog_stat = "Adding Songs";
+        if(widget.sm.imported == 0)
+          prog = 0;
+        else
+          prog = widget.sm.imported / widget.sm.total;
+      }
+
+      return new Center(
+        child: new Column(
+          children: 
+          [
+            new SizedBox(
+              child: LinearProgressIndicator(value: prog), 
+              width: 300
+            ),
+            new Padding(child: 
+              Text(prog_stat),
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            )
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        )
+      );
+    }
+
+    //Else if songs imported
+    else if (status == 3)
     {
       widget.webview.close();
 
