@@ -101,7 +101,8 @@ class Spotify_Manager {
     print("Handling iOS authentication");
     
     const platform = const MethodChannel('flutter.io.media/get_auth');
-    final String auth_info = await platform.invokeMethod('get_auth');
+    final String auth_info = await platform.invokeMethod('get_auth', {"client":client, 
+                                                                      "secret":secret});
     print(auth_info);
   }
 

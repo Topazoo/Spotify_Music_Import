@@ -3,7 +3,7 @@ import Flutter
 import MediaPlayer
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, SPTSessionManagerDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -30,11 +30,22 @@ import MediaPlayer
           result(FlutterMethodNotImplemented)
           return
         }
-        self?.get_auth(result: result)
+        let arguments = call.arguments as! NSDictionary
+        self?.get_auth(result: result, args: arguments)
       })
 
       GeneratedPluginRegistrant.register(with: self)
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
+    print("success", session)
+  }
+  func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
+    print("fail", error)
+  }
+  func sessionManager(manager: SPTSessionManager, didRenew session: SPTSession) {
+    print("renewed", session)
   }
 
   private func get_media(result: FlutterResult) { 
@@ -47,7 +58,9 @@ import MediaPlayer
     result(nsSongDict)
   }
 
-  private func get_auth(result: FlutterResult) { 
-    result(String("Fetching auth using Swift"))
+  private func get_auth(result: FlutterResult, args: NSDictionary) { 
+    let client = args["client"]
+    let secret = args["secret"]
+    result(client)
   }
 }
