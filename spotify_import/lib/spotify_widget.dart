@@ -227,6 +227,11 @@ class _Spotify_Widget extends State<Spotify_Widget> {
     //Else if songs imported
     else if (status == 3)
     {
+      widget.sm.found = 0;
+      widget.sm.total = 0;
+      widget.sm.imported = 0; 
+      widget.sm.add_status = 0;
+
       widget.webview.close();
 
       String resText = "";
@@ -287,7 +292,6 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                           width: double.infinity,
                         );
       }
-
       return new Center(
         child: Column(children: [                        
             
@@ -331,7 +335,11 @@ class _Spotify_Widget extends State<Spotify_Widget> {
                     color: AppTheme.MainThemeSwatch.swatch,
                     textColor: Colors.white,
                     child: new Text("Done", textScaleFactor: 2.0,),
-                    onPressed: (){widget.sm.retCode = 1; update();},
+                    onPressed: (){
+                        widget.sm.retCode = 1; 
+                        widget.aud.selected.clear();
+                        update();
+                      },
                     padding: new EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
                   )) 
                 ],
