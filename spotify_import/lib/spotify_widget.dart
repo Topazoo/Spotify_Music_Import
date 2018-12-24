@@ -80,7 +80,9 @@ class _Spotify_Widget extends State<Spotify_Widget> {
       }
       else
       {
-        widget.sm.handle_auth_iOS();
+        if(!widget.sm.is_authenticated)
+          widget.sm.handle_auth_iOS();
+          
         return new Center(child: new Text("Attempting to connect to Spotify server...", 
                                     textScaleFactor: 1.2,));
       }

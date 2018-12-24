@@ -62,6 +62,7 @@ class Spotify_Manager {
   String authUrl;
   String accessCode;
   int retCode;
+  bool is_authenticated = false;
 
   String callback = "http://localhost:8000";
   String scopes = "user-library-modify%20playlist-modify-private";
@@ -215,6 +216,7 @@ class Spotify_Manager {
 
       //Update state to display import button
       retCode = 1;
+      is_authenticated = true;
     }
 
     else
@@ -316,6 +318,7 @@ class Spotify_Manager {
                 );
 
         imported += p_id.length;
+        wid.setState(() {});
       }
       
     }
@@ -351,6 +354,7 @@ class Spotify_Manager {
                         body: jsonEncode(uri_map)
                        );
         imported += p_uri.length;
+        wid.setState(() {});
       }
     }
 
