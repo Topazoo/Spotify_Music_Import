@@ -92,14 +92,12 @@ class Spotify_Manager {
 
   void handle_auth_iOS() async
   {
-    print("Handling iOS authentication");
     run_server();
     const platform = const MethodChannel('flutter.io.media/get_auth');
-    final String auth_info = await platform.invokeMethod('get_auth', {"client":client, 
-                                                                      "secret":secret,
-                                                                      "callback":callback,
-                                                                      "auth_url":authUrl});
-    print(auth_info);
+    await platform.invokeMethod('get_auth', {"client":client, 
+                                              "secret":secret,
+                                              "callback":callback,
+                                              "auth_url":authUrl});
   }
 
   void get_auth() async
@@ -151,7 +149,7 @@ class Spotify_Manager {
 
     String landing = r"""
     <html>
-      <body style="background-color:green">
+      <body style="background-color:#1db954">
         <div>
         <center>
           <h1 style="color:white; padding-top:500px; font-size:100px">
@@ -174,7 +172,6 @@ class Spotify_Manager {
     //Wait for Spotify callback
     await for (HttpRequest request in server) {
       request.response..headers.contentType = ContentType.html..write(landing)..close();
-      print(request.uri.queryParameters);
 
       //If authenticated, store code
       if (request.uri.queryParameters.containsKey('code'))

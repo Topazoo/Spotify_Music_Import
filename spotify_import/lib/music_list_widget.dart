@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'audio_fs.dart' as Audio_FS;
 import 'dart:io' as IO;
+import 'theme.dart' as MT;
 
 class Music_List_Widget_Known extends StatefulWidget {
   /* Homepage widget that attaches to root */
@@ -49,7 +50,7 @@ class _Music_List_Widget_Known extends State<Music_List_Widget_Known> with Widge
 
           new Container(child: 
                           new Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                      child: new Text("Known songs", 
+                                      child: new Text("Known Songs", 
                                                       textAlign: TextAlign.center,
                                                       textScaleFactor: 1.2,
                                                       ),
@@ -100,8 +101,36 @@ class _Music_List_Widget_Known extends State<Music_List_Widget_Known> with Widge
 
                 ],
               );
-            },
-          )),
+            }, 
+          ),),
+          new Divider(height: 2.0,),
+          new ButtonBar(children: <Widget>[
+              new RaisedButton(
+                child: new Text("Select All"),
+                onPressed: (){
+                  for(Audio_FS.Audio_File file in widget.aud.files)
+                  {
+                    if(!widget.aud.selected.contains(file))
+                      widget.aud.selected.add(file);
+
+                    setState(() {});
+                  }
+                },
+                padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                color: MT.MainThemeSwatch.swatch[100],
+              ),
+              new RaisedButton(
+                child: new Text("Select None"),
+                onPressed: (){
+                  widget.aud.selected.clear();
+                  setState(() {});
+                },
+                padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                color: Colors.red[100],
+              )
+            ],
+            alignment: MainAxisAlignment.center,
+          )
         ]
       )
     );
@@ -152,7 +181,7 @@ class _Music_List_Widget_Unknown extends State<Music_List_Widget_Unknown> with W
           
           new Container(child: 
                           new Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                      child: new Text("Unknown songs", 
+                                      child: new Text("Unknown Songs", 
                                                       textAlign: TextAlign.center,
                                                       textScaleFactor: 1.2,
                                                       ),

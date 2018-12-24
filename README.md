@@ -23,9 +23,6 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 ### Compatibility 
 - Fit webview to devices of different sizes (Uses Safari for now)
 
-### Misc.
-- Clean Spotify framework and custom headers from project
-
 ## Requirements:
 ### Flutter Plugins:
 - Simple Permissions
