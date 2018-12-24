@@ -381,7 +381,6 @@
 					"\"flutter_webview_plugin\"",
 					"-framework",
 					"\"simple_permissions\"",
-					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -472,7 +471,6 @@
 					"\"flutter_webview_plugin\"",
 					"-framework",
 					"\"simple_permissions\"",
-					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -529,7 +527,6 @@
 					"\"flutter_webview_plugin\"",
 					"-framework",
 					"\"simple_permissions\"",
-					"-ObjC",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

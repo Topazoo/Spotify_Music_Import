@@ -149,6 +149,22 @@ class Spotify_Manager {
   {
     /* Run callback server for Spotify authentication */
 
+    String landing = r"""
+    <html>
+      <body style="background-color:green">
+        <div>
+        <center>
+          <h1 style="color:white; padding-top:500px; font-size:100px">
+            Connected to Spotify!
+          </h1>
+          <h4 style="color:white; padding-top:30px; font-size:50px">
+            Return to the Spotify Import app to begin importing songs
+          </h4>
+        </center>
+        </div>
+      </body>
+    </html> """;
+
     //Create server on locslhost
     var server = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
@@ -157,8 +173,7 @@ class Spotify_Manager {
 
     //Wait for Spotify callback
     await for (HttpRequest request in server) {
-      request.response..write('Validated!')..close();
-      
+      request.response..headers.contentType = ContentType.html..write(landing)..close();
       print(request.uri.queryParameters);
 
       //If authenticated, store code
@@ -196,7 +211,7 @@ class Spotify_Manager {
       token = new Token(body["access_token"], body["refresh_token"], 
                         body["expires_in"], client, secret);
 
-      //Update state to display imprt button
+      //Update state to display import button
       retCode = 1;
     }
 

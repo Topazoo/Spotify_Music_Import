@@ -3,7 +3,7 @@ import Flutter
 import MediaPlayer
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, SPTSessionManagerDelegate {
+@objc class AppDelegate: FlutterAppDelegate, {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -36,16 +36,6 @@ import MediaPlayer
 
       GeneratedPluginRegistrant.register(with: self)
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
-
-  func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
-    print("success", session)
-  }
-  func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
-    print("fail", error)
-  }
-  func sessionManager(manager: SPTSessionManager, didRenew session: SPTSession) {
-    print("renewed", session)
   }
 
   private func get_media(result: FlutterResult) { 
