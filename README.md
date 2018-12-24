@@ -14,14 +14,17 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 ## TODO List:
 ### Spotify API Access
 - Perform a more robust title and artist verification on collected songs
+- Handle more obscure import errors
 
 ### Error Handling
 - Display error page if user denies read privileges rather than exiting
 - Perform verifications on all HTTP requests to ensure transactions successful
-- Fix keyboard issues with iOS webview
 
 ### Compatibility 
-- Fit webview to devices of different sizes
+- Fit webview to devices of different sizes (Uses Safari for now)
+
+### Misc.
+- Clean Spotify framework and custom headers from project
 
 ## Requirements:
 ### Flutter Plugins:

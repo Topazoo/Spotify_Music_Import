@@ -59,8 +59,9 @@ import MediaPlayer
   }
 
   private func get_auth(result: FlutterResult, args: NSDictionary) { 
-    let client = args["client"]
-    let secret = args["secret"]
-    result(client)
+    let auth_url = args["auth_url"] as! String
+
+    guard let url = URL(string: auth_url) else { return }
+    UIApplication.shared.open(url)
   }
 }

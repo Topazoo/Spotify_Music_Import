@@ -88,21 +88,17 @@ class Spotify_Manager {
   {
     //Run integrated server to handle Spotify callback
     run_server();
-
-    //Load authentication URL
-    authUrl = "https://accounts.spotify.com/authorize?client_id=" + client;
-    authUrl += "&response_type=code";
-    authUrl += "&redirect_uri=" + callback;
-    authUrl += "&scope=" + scopes; 
   }
 
   void handle_auth_iOS() async
   {
     print("Handling iOS authentication");
-    
+    run_server();
     const platform = const MethodChannel('flutter.io.media/get_auth');
     final String auth_info = await platform.invokeMethod('get_auth', {"client":client, 
-                                                                      "secret":secret});
+                                                                      "secret":secret,
+                                                                      "callback":callback,
+                                                                      "auth_url":authUrl});
     print(auth_info);
   }
 
@@ -113,6 +109,12 @@ class Spotify_Manager {
     //Get Spotify API info
     client = await load_env("client");
     secret = await load_env("secret");
+
+    //Load authentication URL
+    authUrl = "https://accounts.spotify.com/authorize?client_id=" + client;
+    authUrl += "&response_type=code";
+    authUrl += "&redirect_uri=" + callback;
+    authUrl += "&scope=" + scopes; 
 
     if(Platform.isAndroid)
       handle_auth_android(client, secret);
@@ -128,7 +130,7 @@ class Spotify_Manager {
     if (param == "client")
     {
       int start = env.indexOf('\'') + 1;
-      int end = env.indexOf('\n') - 2;
+      int end = env.indexOf('\n') - 1; //TODO - Check on Android
       
       return env.substring(start, end);
     }
@@ -157,6 +159,8 @@ class Spotify_Manager {
     await for (HttpRequest request in server) {
       request.response..write('Validated!')..close();
       
+      print(request.uri.queryParameters);
+
       //If authenticated, store code
       if (request.uri.queryParameters.containsKey('code'))
       {
