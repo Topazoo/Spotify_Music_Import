@@ -25,10 +25,10 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>$(PRODUCT_NAME) media library use</string>
+	<string>Read Music from Library</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-  <string>spotify</string>
+		<string>spotify</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -37,6 +37,7 @@
 			<string>com.spotify.spotifyimport</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>app.spotifyimport</string>
 				<string>http</string>
 			</array>
 		</dict>
@@ -58,6 +59,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

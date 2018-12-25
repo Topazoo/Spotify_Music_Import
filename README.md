@@ -14,12 +14,11 @@ It's hard to manage jumping between music stored on my phone and on my Spotify. 
 ## TODO List:
 ### Spotify API Access
 - Perform a more robust title and artist verification on collected songs
-- Add support for songs with non-alphanumeric characters
 
 ### Error Handling
 - Display error page if user denies read privileges rather than exiting
 - Perform verifications on all HTTP requests to ensure transactions successful
-- Add support for Spotify timeouts 
+- Ensure media player permissions before loading library
 
 ### Compatibility 
 - Fit webview to Android devices of different sizes

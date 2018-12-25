@@ -177,26 +177,32 @@ class Spotify_Manager {
 
     //Wait for Spotify callback
     await for (HttpRequest request in server) {
-      request.response..headers.contentType = ContentType.html..write(landing)..close();
+      HttpResponse resp = request.response;
+      HttpHeaders headers = resp.headers;
+      headers.contentType = ContentType.html;
+      resp.write(landing);
 
       //If authenticated, store code
       if (request.uri.queryParameters.containsKey('code'))
       {
         accessCode = request.uri.queryParameters['code'];
-        server.close();
-        send_post();
+        await send_post();
       }
 
       //Else, error
       else if (request.uri.queryParameters.containsKey('error'))
-        retCode = 0;     
+        retCode = 0;   
+
+      resp.close();  
 
       //Update widget state
       wid.setState(() {}); 
     }
+    
+    await server.close();
   }
 
-  void send_post() async
+  Future send_post() async
   {
     /* Post to Spotify server for final authentication */
 
@@ -217,6 +223,7 @@ class Spotify_Manager {
       //Update state to display import button
       retCode = 1;
       is_authenticated = true;
+
     }
 
     else
@@ -226,10 +233,19 @@ class Spotify_Manager {
     wid.setState(() {}); 
   }
 
+  String sanatize_title(String raw_title)
+  {
+    String title = raw_title.replaceAll('\'', "");
+    title = title.replaceAll('#', "");
+
+    return title;
+  }
+
   String build_search_query(String title, String artist)
   {
     /* Build a Spotify API search query */
 
+    title = sanatize_title(title);
     title = title.replaceAll(" ", "+");
     artist = artist.replaceAll(" ", "+");
     String queryStart = "https://api.spotify.com/v1/search?";
