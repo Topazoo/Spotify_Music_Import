@@ -29,6 +29,7 @@ class Audio_Filesystem {
   //List of unknown files
   List<Audio_File> unknownFiles = new List<Audio_File>();
 
+  bool has_permissions = false;
   bool ret_complete_iOS = false;
 
   Audio_Filesystem()
@@ -46,7 +47,7 @@ class Audio_Filesystem {
     unknownFiles.sort((a, b) => a.title.compareTo(b.title));
   }
 
-  void fetch_audio() async
+  Future fetch_audio() async
   {
     /* Allow for cross-platform audio file retrieval */
     
@@ -87,22 +88,32 @@ class Audio_Filesystem {
       return [title, artist];
   }
 
-  void iPhone_fetch() async
+  Future iPhone_fetch() async
   {
     /* Fetch iPhone music library */
 
     if (!ret_complete_iOS)
     {
       const platform = const MethodChannel('flutter.io.media/get_media');
+      const perm_plat = const MethodChannel('flutter.io.media/get_perm');
 
       try {
-        final Map result = await platform.invokeMethod('get_media');
-        result.forEach((title, artist)
+        while(true)
         {
-          Audio_File newFile = new Audio_File(title, artist, null);
-          files.add(newFile);
-          selected.add(newFile);
-        });
+          has_permissions = await perm_plat.invokeMethod('get_perm');
+          if(has_permissions)
+          {
+            final Map result = await platform.invokeMethod('get_media');
+            result.forEach((title, artist)
+            {
+              Audio_File newFile = new Audio_File(title, artist, null);
+              files.add(newFile);
+              selected.add(newFile);
+            });
+            break;
+          }
+        }
+
       } on PlatformException catch (e) {
         print("Failed to get audio files: '${e.message}'.");
       }

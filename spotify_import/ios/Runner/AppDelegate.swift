@@ -14,6 +14,8 @@ import MediaPlayer
                                               binaryMessenger: controller)
       let authChannel = FlutterMethodChannel(name: "flutter.io.media/get_auth",
                                               binaryMessenger: controller)
+      let permChannel = FlutterMethodChannel(name: "flutter.io.media/get_perm",
+                                              binaryMessenger: controller)
                                   
       mediaChannel.setMethodCallHandler({
         [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
@@ -34,6 +36,14 @@ import MediaPlayer
         self?.get_auth(result: result, args: arguments)
       })
 
+      permChannel.setMethodCallHandler({
+        [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
+        guard call.method == "get_perm" else {
+            result(FlutterMethodNotImplemented)
+            return
+        }
+        self?.get_perm(result: result)
+    })
       GeneratedPluginRegistrant.register(with: self)
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -53,5 +63,26 @@ import MediaPlayer
 
     guard let url = URL(string: auth_url) else { return }
     UIApplication.shared.open(url)
+  }
+    
+  private func get_perm(result: FlutterResult) {
+    var res = false
+    if MPMediaLibrary.authorizationStatus() == .authorized
+    {
+        result(true)
+    } else {
+        MPMediaLibrary.requestAuthorization { (status) in
+            switch status {
+                case .authorized:
+                    res = true
+                case .notDetermined: break // We are already request the authorization above
+                case .denied,
+                     .restricted:
+                    res = false
+            }
+        }
+    }
+    
+    result(res)
   }
 }
